@@ -56,4 +56,3 @@ let employee = new Employee("Software Developer", "IT", true, "Software Developm
 console.log("\nEmployee object that extends Job...");
 console.log(employee.getEmployeeName());
 console.log(employee.employeeSummary());
-//console.log(employee);
