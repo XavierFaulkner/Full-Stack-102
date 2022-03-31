@@ -16,6 +16,9 @@ function addTask() {
 
 list.addEventListener('click', function(e){
     var listItem = e.target;
-    listItem.remove();
+    listItem.style.cssText += "text-decoration: line-through;";
+    setTimeout(function(){
+        listItem.remove();
+    }, 1000);
 });
 
