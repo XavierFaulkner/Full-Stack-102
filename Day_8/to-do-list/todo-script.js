@@ -1,6 +1,7 @@
 const list = document.querySelector('ul');
 const listItems = list.children;
 const inputBox = document.getElementById('inputTask');
+const itemForm = document.getElementById('addItem');
 
 function addTask() {
     if(inputBox.value != "") {
@@ -22,3 +23,7 @@ list.addEventListener('click', function(e){
     }, 1000);
 });
 
+itemForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    return false;
+});
