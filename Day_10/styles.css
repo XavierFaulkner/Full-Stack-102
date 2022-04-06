@@ -25,10 +25,6 @@ input {
     height: 30px;
 }
 
-#startGame {
-    
-}
-
 /*-----------------------------------*/
 #choose {
     width: 80%;
@@ -52,6 +48,68 @@ input {
     border-width: 2px;
     border-radius: 10px;
     border-color: #fc6b03;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    overflow: hidden;
+}
+
+#roundsOverflow {
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+#rounds {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+#roundHistory {
+    width: 100%;
+    background-color: #fc6b03;
+    margin: 0;
+    height: 40px;
+    border-radius: 7px 7px 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#roundHistory h2 {
+    margin: 0;
+}
+
+li {
+    width: 100%;
+    list-style-type: none;
+    height: 40px;
+    border-style: none none solid none;
+    border-color: black;
+    border-width: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: larger;
+}
+
+.won {
+    background-color: #31c240;
+}
+
+.lost {
+    background-color: #b62929;
+}
+
+.tie {
+    background-color: #7f7f7f;
+}
+
+.gold {
+    background-color: #e1a91c;
 }
 
 
@@ -75,4 +133,18 @@ input {
 h2 {
     margin-left: 20px;
     color: white;
+}
+
+#matches {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+#matchesOverflow {
+    width: 100%;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    max-height: 150px;
 }

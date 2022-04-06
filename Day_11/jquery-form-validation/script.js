@@ -21,7 +21,9 @@ $(document).ready(function() {
 
     for(let i = 0; i < required.length; i++) {
         required[i].on("input", function() {
-            $(this).prev().removeClass("warning");
+            if(!(required[i].val() == "")) {
+                $(this).prev().removeClass("warning");
+            }
         });
     }
 

@@ -31,6 +31,10 @@ let player4 = {
     getHand: getHand()
 }
 
+gameInProgress = false;
+roundsPlayed = 0;
+playUntil = 3;
+
 //get all html elements
 const playerName = document.getElementById('playerName');
 
@@ -51,71 +55,37 @@ playerName.addEventListener('input', function(e){
     player1.name = playerName.value;
 });
 
-rock.addEventListener('click', function(e) {
-    console.log("rock");
-});
-
-paper.addEventListener('click', function(e) {
-    p1Move = 1;
-});
-
-scissors.addEventListener('click', function(e) {
-    p1Move = 2;
-});
-
-let playRound = (p1, p2) => {
-    //Show what each player threw
-    let p1Move = -1;
-
-    while(p1Move < 0) {
-        //wait for user to make a move
-        console.log("waiting");
-    }
-    console.log(p1.name + " throws: " + hands[p1Move]);
-
-    p2.getHand = getHand();
-    let p2Move = p2.getHand;
-    console.log(p2.name + " throws: " + hands[p2Move]);
-
+let decideWinner = (p1Move, p2Move, p1, p2) => {
     //Decide who won
     switch(p1Move) {
         case 0:
             if(p2Move == 0) {
-                console.log("It's a tie.");
                 return null;
             } else if(p2Move == 1) {
-                console.log(p2.name + " Wins!");
                 p2.numOfWins++;
                 return p2;
             } else if(p2Move == 2) {
-                console.log(p1.name + " Wins!");
                 p1.numOfWins++;
                 return p1;
             }
         case 1:
             if(p2Move == 0) {
-                console.log(p1.name + " Wins!");
                 p1.numOfWins++;
                 return p1;
             } else if(p2Move == 1) {
-                console.log("It's a tie.");
                 return null;
             } else if(p2Move == 2) {
-                console.log(p2.name + " Wins!");
                 p2.numOfWins++;
                 return p2;
             }
         case 2:
             if(p2Move == 0) {
-                console.log(p2.name + " Wins!");
                 p2.numOfWins++;
                 return p2;
             } else if(p2Move == 1) {
-                console.log(p1.name + " Wins!");
                 p1.numOfWins++;
                 return p1;
             } else if(p2Move == 2) {
-                console.log("It's a tie.");
                 return null;
             }
         default:
@@ -123,23 +93,124 @@ let playRound = (p1, p2) => {
     }
 }
 
-let playGame = (p1, p2, playUntil) => {
-    //untill one of the players wins enough games keep playing
-    while(p1.numOfWins < playUntil && p2.numOfWins < playUntil) {
-        //playRound(p1, p2);
-    }
+let playRound = (move, p1, p2) => {
+    // if(roundsPlayed == 0) {
+    //     showRounds.innerHTML = "";
+    // }
+    p1.getHand = move;
+    let p1Move = p1.getHand;
+    console.log(p1.name + " throws: " + hands[p1Move]);
 
-    //return the player that won
-    if(p1.numOfWins == playUntil) {
-        console.log("\n" + p1.name + " wins the Game!!! Score: " + p1.numOfWins + " - " + p2.numOfWins);
-        return p1;
-    } else if(p2.numOfWins == playUntil) {
-        console.log("\n" + p2.name + " wins the Game!!! Score: " + p1.numOfWins + " - " + p2.numOfWins);
-        return p2;
+    p2.getHand = getHand();
+    let p2Move = p2.getHand;
+    console.log(p2.name + " throws: " + hands[p2Move]);
+    
+    let roundWinner = decideWinner(p1Move, p2Move, p1, p2);
+    if(roundWinner == null) {
+        let roundData = document.createElement('li');
+        roundData.innerHTML = "It's a tie.";
+        roundData.className = "tie";
+        if(showRounds.firstChild) {
+            showRounds.insertBefore(roundData, showRounds.firstChild)
+        } else {
+            showRounds.appendChild(roundData);
+        }
+        return null;
+    } else {
+        if(p1.numOfWins < playUntil && p2.numOfWins < playUntil) {
+            roundsPlayed++;
+            let roundData = document.createElement('li');
+            roundData.innerHTML = roundWinner.name + " wins round " + roundsPlayed;
+            if(roundWinner.name === "Player 2") {
+                roundData.className = "lost";
+            } else {
+                roundData.className = "won";
+            }
+            if(showRounds.firstChild) {
+                showRounds.insertBefore(roundData, showRounds.firstChild)
+            } else {
+                showRounds.appendChild(roundData);
+            }
+            return roundWinner;
+        } else {
+            if(p1.numOfWins == playUntil) {
+                roundsPlayed++;
+                let roundData1 = document.createElement('li');
+                roundData1.innerHTML = roundWinner.name + " wins round " + roundsPlayed;
+                if(roundWinner.name === "Player 2") {
+                    roundData1.className = "lost";
+                } else {
+                    roundData1.className = "won";
+                }
+                let roundData = document.createElement('li');
+                roundData.innerHTML = "\n" + p1.name + " wins the Game!!! Score: " + p1.numOfWins + " - " + p2.numOfWins;
+                roundData.className = "gold";
+                if(showRounds.firstChild) {
+                    showRounds.insertBefore(roundData1, showRounds.firstChild);
+                    showRounds.insertBefore(roundData, showRounds.firstChild);
+                } else {
+                    showRounds.appendChild(roundData);
+                }
+                let gameData = document.createElement('li');
+                gameData.innerHTML = roundWinner.name + " won! The score was " + p1.numOfWins + " - " + p2.numOfWins;
+                gameData.className = "gold";
+                if(gameHistory.firstChild) {
+                    gameHistory.insertBefore(gameData, gameHistory.firstChild);
+                } else {
+                    gameHistory.appendChild(gameData);
+                }
+                roundsPlayed = 0;
+                p1.numOfWins = 0;
+                p2.numOfWins = 0;
+                return p1;
+            } else if(p2.numOfWins == playUntil) {
+                roundsPlayed++;
+                let roundData1 = document.createElement('li');
+                roundData1.innerHTML = roundWinner.name + " wins round " + roundsPlayed;
+                if(roundWinner.name === "Player 2") {
+                    roundData1.className = "lost";
+                } else {
+                    roundData1.className = "won";
+                }
+                let roundData = document.createElement('li');
+                roundData.innerHTML = "\n" + p2.name + " wins the Game!!! Score: " + p1.numOfWins + " - " + p2.numOfWins;
+                roundData.className = "gold";
+                if(showRounds.firstChild) {
+                    showRounds.insertBefore(roundData1, showRounds.firstChild);
+                    showRounds.insertBefore(roundData, showRounds.firstChild);
+                } else {
+                    showRounds.appendChild(roundData);
+                }
+                let gameData = document.createElement('li');
+                gameData.innerHTML = roundWinner.name + " won! The score was " + p1.numOfWins + " - " + p2.numOfWins;
+                gameData.className = "gold";
+                if(gameHistory.firstChild) {
+                    gameHistory.insertBefore(gameData, gameHistory.firstChild);
+                } else {
+                    gameHistory.appendChild(gameData);
+                }
+                roundsPlayed = 0;
+                p1.numOfWins = 0;
+                p2.numOfWins = 0;
+                return p2;
+            }
+        }
     }
 }
 
 //start game on click
 startGame.addEventListener('click', function(e) {
-    playGame(player1, player2, 5);
+    playGame(player1, player2, numOfGames);
+});
+
+rock.addEventListener('click', function(e) {
+    playRound(0, player1, player2);
+});
+
+paper.addEventListener('click', function(e) {
+    playRound(1, player1, player2);
+});
+
+scissors.addEventListener('click', function(e) {
+    playRound(2, player1, player2);
 });

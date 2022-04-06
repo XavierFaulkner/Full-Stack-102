@@ -56,3 +56,13 @@ let employee = new Employee("Software Developer", "IT", true, "Software Developm
 console.log("\nEmployee object that extends Job...");
 console.log(employee.getEmployeeName());
 console.log(employee.employeeSummary());
+
+let myGlobalVar = "";
+
+function scopeFunction() {
+	let myVar = "apple";
+	return myVar;
+}
+
+myGlobalVar = scopeFunction();
+console.log(myGlobalVar);
