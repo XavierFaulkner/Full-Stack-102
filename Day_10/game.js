@@ -36,6 +36,8 @@ roundsPlayed = 0;
 playUntil = 3;
 
 //get all html elements
+const numOfRounds = document.getElementById('numOfRounds');
+
 const playerName = document.getElementById('playerName');
 
 const showRounds = document.querySelector('ul#rounds');
@@ -54,6 +56,11 @@ const startGame = document.getElementById('startGame');
 playerName.addEventListener('input', function(e){
     player1.name = playerName.value;
 });
+
+//Update playUnitl
+numOfRounds.addEventListener('change', function(e) {
+    playUntil = numOfRounds.value;
+})
 
 let decideWinner = (p1Move, p2Move, p1, p2) => {
     //Decide who won
@@ -94,19 +101,18 @@ let decideWinner = (p1Move, p2Move, p1, p2) => {
 }
 
 let playRound = (move, p1, p2) => {
-    // if(roundsPlayed == 0) {
-    //     showRounds.innerHTML = "";
-    // }
+    if(roundsPlayed == 0) {
+        showRounds.innerHTML = "";
+    }
     p1.getHand = move;
     let p1Move = p1.getHand;
-    console.log(p1.name + " throws: " + hands[p1Move]);
 
     p2.getHand = getHand();
     let p2Move = p2.getHand;
-    console.log(p2.name + " throws: " + hands[p2Move]);
     
     let roundWinner = decideWinner(p1Move, p2Move, p1, p2);
     if(roundWinner == null) {
+        roundsPlayed++;
         let roundData = document.createElement('li');
         roundData.innerHTML = "It's a tie.";
         roundData.className = "tie";
@@ -197,11 +203,6 @@ let playRound = (move, p1, p2) => {
         }
     }
 }
-
-//start game on click
-startGame.addEventListener('click', function(e) {
-    playGame(player1, player2, numOfGames);
-});
 
 rock.addEventListener('click', function(e) {
     playRound(0, player1, player2);
