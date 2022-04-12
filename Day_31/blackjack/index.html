@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Blackjack</h1>
+        <div id="coins">
+            <img src="images/stackofchips.png" width="40" height="40">
+            <p id="numOfCoins">1000</p>
+        </div>
+    </header>
+    <main>
+        <div id="cardPiles">
+            <div id="piles">
+                <p>Dealt</p>
+                <div id="dealt">
+                    <p id="numOfDealt">0</p>
+                </div>
+            </div>
+            <div id="piles">
+                <p>Deck</p>
+                <div id="active">
+                    <p id="numOfActive">52</p>
+                </div>
+            </div>
+        </div>
+        <div id="playArea">
+            <div id="side1">
+                <div class="center">
+                    <div>
+                        <div id="playerTotal" class="blackBox">
+                            Please place a bet
+                        </div>
+                    </div>
+                    <div id="cardsAndOptions">
+                        <div id="playerCards">
+                            <div class="cardPlaceholder">
+                            </div>
+                        </div>
+                        <div id="hitstay">
+                            <button id="hit" disabled>Hit</button>
+                            <button id="stay" disabled>Stay</button>
+                        </div>
+                    </div>
+                    <div id="placeBet">
+                        <button id="five" class="betToken" onclick="startGame(5)">5</button>
+                        <button id="ten" class="betToken" onclick="startGame(10)">10</button>
+                        <button id="twenty" class="betToken" onclick="startGame(20)">20</button>
+                        <button id="fifty" class="betToken" onclick="startGame(50)">50</button>
+                        <button id="hundred" class="betToken" onclick="startGame(100)">100</button>
+                    </div>
+                </div>
+            </div>
+            <div id="side2">
+                <div>
+                    <div id="dealerTotal" class="blackBox">
+                        ...
+                    </div>
+                </div>
+                <div id="dealerCards">
+                    <div class="cardPlaceholder">
+                    </div>
+                </div>
+                <div>
+                    <div id="dealerTotal" class="blackBox">
+                        Dealer's Hand
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="game.js"></script>
+</body>
+</html>
