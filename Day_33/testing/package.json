@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "jest": "^27.5.1"
+  },
+
+  "scripts": {
+    "test": "jest"
+  },
+
+  "type": "module",
+
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": ["./src/**"],
+    "coverageReporters": ["html"],
+    "coverageThreshold": {
+      "global": {
+        "lines": 90
+      }
+    }
+  }
+}
