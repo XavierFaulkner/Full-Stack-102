@@ -93,7 +93,7 @@ function startGame(betAmount) {
                 setTimeout(() => {
                     givePlayerCard("dealer");
                     //remove dealer's second card
-                    dealerCardsHTML.getElementsByClassName('card')[1].remove();
+                    dealerCardsHTML.firstElementChild.nextSibling.remove();
                     //add a placeholder card
                     let placeholderCard = document.createElement('div');
                     placeholderCard.classList.add("cardPlaceholder");
@@ -170,13 +170,36 @@ hitButton.addEventListener('click', function(e) {
         if(playerTotal >= 21) {
             hitButton.setAttribute("disabled", "true");
             stayButton.setAttribute("disabled", "true");
-            setTimeout(() => {finish()}, 500)
+            setTimeout(() => {finish()}, 500);
         } else {
             return;
         }
     }, 500);
 });
 
+stayButton.addEventListener('click', function(e) {
+    hitButton.setAttribute("disabled", "true");
+    stayButton.setAttribute("disabled", "true");
+    setTimeout(() => {
+        dealerPlay();
+    }, 500);
+})
+
 function finish() {
-    
+    if(playerTotal > 21) {
+        //Bust you lose
+        console.log("bust");
+        //reset game
+    } else {
+        //deal dealer's cards
+        dealerPlay();
+    }
+}
+
+function dealerPlay() {
+    //show second card
+    hide = false;
+    dealerCardsHTML.getElementsByClassName('cardPlaceholder')[0].remove();
+    dealerCardsHTML.appendChild(dealerCards[1]);
+    updateTotal(dealerCardsValues, "dealer");
 }
