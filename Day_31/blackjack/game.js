@@ -178,5 +178,5 @@ hitButton.addEventListener('click', function(e) {
 });
 
 function finish() {
-    console.log("hey");
+    
 }
