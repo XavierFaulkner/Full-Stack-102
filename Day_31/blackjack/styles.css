@@ -109,10 +109,12 @@ button {
 
 #playerCards {
     display: flex;
+    flex-wrap: wrap;
 }
 
 #dealerCards {
     display: flex;
+    flex-wrap: wrap;
 }
 
 #top {

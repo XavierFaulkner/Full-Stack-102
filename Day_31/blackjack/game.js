@@ -10,6 +10,7 @@ let dealt = [];
 let coins = 1000;
 let wager = 0;
 let playerTotal = 0;
+let dealerTotal = 0;
 let hide = true;
 
 deck = shuffleDeck(deck);
@@ -83,18 +84,26 @@ function startGame(betAmount) {
     for(let i = 0; i < wagerButtons.length; i++) {
         wagerButtons[i].setAttribute("disabled", "true");
     }
-    givePlayerCard("player");
-    givePlayerCard("dealer");
-    givePlayerCard("player");
-    givePlayerCard("dealer");
-    //remove dealer's second card
-    dealerCardsHTML.getElementsByClassName('card')[1].remove();
-    //add a placeholder card
-    let placeholderCard = document.createElement('div');
-    placeholderCard.classList.add("cardPlaceholder");
-    dealerCardsHTML.appendChild(placeholderCard);
-    hitButton.disabled = false;
-    stayButton.disabled = false;
+    setTimeout(() => { 
+        givePlayerCard("player");
+        setTimeout(() => {
+            givePlayerCard("dealer");
+            setTimeout(() => {
+                givePlayerCard("player");
+                setTimeout(() => {
+                    givePlayerCard("dealer");
+                    //remove dealer's second card
+                    dealerCardsHTML.getElementsByClassName('card')[1].remove();
+                    //add a placeholder card
+                    let placeholderCard = document.createElement('div');
+                    placeholderCard.classList.add("cardPlaceholder");
+                    dealerCardsHTML.appendChild(placeholderCard);
+                    hitButton.disabled = false;
+                    stayButton.disabled = false;
+                }, 500);
+            }, 500);
+        }, 500);
+    }, 500);
 }
 
 function givePlayerCard(player) {
@@ -147,8 +156,27 @@ function updateTotal(cards, player) {
     }
     if(player == "player") {
         playerTotalHTML.innerText = total;
+        playerTotal = total;
     } else {
         dealerTotalHTML.innerText = total;
+        dealerTotal = total;
     }
     return total;
+}
+
+hitButton.addEventListener('click', function(e) {
+    setTimeout(() => { 
+        givePlayerCard("player");
+        if(playerTotal >= 21) {
+            hitButton.setAttribute("disabled", "true");
+            stayButton.setAttribute("disabled", "true");
+            setTimeout(() => {finish()}, 500)
+        } else {
+            return;
+        }
+    }, 500);
+});
+
+function finish() {
+    console.log("hey");
 }
