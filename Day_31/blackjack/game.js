@@ -6,9 +6,11 @@ let deck = [
 ]
 
 let dealt = [];
+let numDealt = 0;
 
 let coins = 1000;
 let wager = 0;
+let winnings = 0;
 let playerTotal = 0;
 let dealerTotal = 0;
 let hide = true;
@@ -26,11 +28,13 @@ const stayButton = document.getElementById('stay');
 const playerTotalHTML = document.getElementById('playerTotal');
 const dealerTotalHTML = document.getElementById('dealerTotal');
 
+let playerCards = [];
+let playerCardsValues = [];
+let dealerCards = [];
+let dealerCardsValues = [];
 
-const playerCards = [];
-const playerCardsValues = [];
-const dealerCards = [];
-const dealerCardsValues = [];
+const placeholderCard = document.createElement('div');
+placeholderCard.classList.add("cardPlaceholder");
 
 function cardHTML() {
     cardInfo = getRandomCard();
@@ -57,8 +61,8 @@ function cardHTML() {
 function getRandomCard() {
     let card = deck.pop(Math.floor(Math.random() * 52));
     numOfActive.innerText = deck.length;
-    dealt.push(card);
-    numOfDealt.innerText = dealt.length;
+    numDealt++;
+    numOfDealt.innerText = numDealt;
     return card;
 }
 
@@ -86,6 +90,7 @@ function startGame(betAmount) {
     }
     setTimeout(() => { 
         givePlayerCard("player");
+        console.log(playerCardsValues);
         setTimeout(() => {
             givePlayerCard("dealer");
             setTimeout(() => {
@@ -95,10 +100,10 @@ function startGame(betAmount) {
                     //remove dealer's second card
                     dealerCardsHTML.firstElementChild.nextSibling.remove();
                     //add a placeholder card
-                    let placeholderCard = document.createElement('div');
-                    placeholderCard.classList.add("cardPlaceholder");
                     dealerCardsHTML.appendChild(placeholderCard);
-                    hitButton.disabled = false;
+                    if(playerTotal < 21) {
+                        hitButton.disabled = false;
+                    }
                     stayButton.disabled = false;
                 }, 500);
             }, 500);
@@ -158,7 +163,7 @@ function updateTotal(cards, player) {
         playerTotalHTML.innerText = total;
         playerTotal = total;
     } else {
-        dealerTotalHTML.innerText = total;
+        dealerTotalHTML.innerText = "Dealer's Hand: " + total;
         dealerTotal = total;
     }
     return total;
@@ -181,18 +186,35 @@ stayButton.addEventListener('click', function(e) {
     hitButton.setAttribute("disabled", "true");
     stayButton.setAttribute("disabled", "true");
     setTimeout(() => {
-        dealerPlay();
+        finish();
     }, 500);
 })
 
 function finish() {
     if(playerTotal > 21) {
-        //Bust you lose
-        console.log("bust");
+        //Bust you lose create popup
+        createPopup("bust");
         //reset game
     } else {
         //deal dealer's cards
         dealerPlay();
+        //display winner and give payouts if needed
+        setTimeout(() => {
+            //determine payout
+            if(playerTotal > dealerTotal && dealerTotal < 21) {
+                winnings = wager*1.5;
+                createPopup("win");
+            } else if(playerTotal == dealerTotal && playerTotal < 21) {
+                winnings = wager;
+                createPopup("push");
+            } else if(playerTotal == 21 && dealerTotal == 21) {
+                winnings = wager*1.5;
+                createPopup("win");
+            } else if(playerTotal == 21 && dealerTotal < playerTotal) {
+                winnings = wager*2;
+                createPopup("win");
+            }
+        }, 1000);
     }
 }
 
@@ -202,4 +224,105 @@ function dealerPlay() {
     dealerCardsHTML.getElementsByClassName('cardPlaceholder')[0].remove();
     dealerCardsHTML.appendChild(dealerCards[1]);
     updateTotal(dealerCardsValues, "dealer");
+    //should dealer hit?
+    if(dealerTotal < 17) {
+        giveDealerCard();
+    }
+}
+
+function giveDealerCard() {
+    setTimeout(() => {
+        givePlayerCard("dealer");
+        if(dealerTotal < 17) {
+            giveDealerCard();
+        }
+    }, 500);
+}
+
+//popup controls
+function createPopup(condition) {
+    let message;
+    let amount;
+    let pic;
+    let color;
+
+    switch(condition) {
+        case "win":
+            message = "You Won!";
+            amount =  "+ $" +wager;
+            pic = "rich";
+            color = "green"
+            break;
+        case "lost":
+            message = "You Lost!";
+            amount =  "- $" +wager;
+            pic = "hobo";
+            color = "red"
+            break;
+        case "bust":
+            message = "Bust!";
+            amount =  "- $" +wager;
+            pic = "hobo";
+            color = "red"
+            break;
+    }
+
+    let popup = document.createElement('div');
+    popup.innerHTML = 
+    `
+    <div id="popup">
+        <div id="popup-content">
+            <div id="message">
+                ${message}
+            </div>
+            <div id="amount" style="color: ${color}">
+                ${amount}
+            </div>
+            <div id="pic-holder">
+                <img id="pic" src="images/${pic}.png" height="120">
+            </div>
+            <div id="continue">
+                Press Enter to play again.
+            </div>
+        </div>
+    </div>
+    `
+    document.getElementsByTagName('main')[0].appendChild(popup);
+}
+
+document.addEventListener("keyup", function(e) {
+if(e.key === "Enter") {
+    try {
+        document.getElementById('popup').remove();
+        resetGame();
+    } catch (error) {
+        return;
+    }
+}
+});
+
+function resetGame() {
+    //reset bet
+    wager = 0;
+    //clear player and dealer cards and add them to burn pile
+    for(let i = 0; i < playerCardsValues.length; i++) {
+        dealt.push(playerCardsValues[i]);
+    }
+    for(let i = 0; i < dealerCardsValues.length; i++) {
+        dealt.push(dealerCardsValues[i]);
+    }
+    playerCardsValues = [];
+    dealerCardsValues = [];
+    playerCards = [];
+    dealerCards = [];
+    playerTotal = 0;
+    dealerTotal = 0;
+    hide = true;
+    playerCardsHTML.innerHTML = `<div class="cardPlaceholder"></div>`;
+    dealerCardsHTML.innerHTML = `<div class="cardPlaceholder"></div>`;
+    playerTotalHTML.innerHTML = "Please place a bet"
+    dealerTotalHTML.innerHTML = "Dealer's Hand: 0"
+    for(let i = 0; i < wagerButtons.length; i++) {
+        wagerButtons[i].disabled = false;
+    }
 }
