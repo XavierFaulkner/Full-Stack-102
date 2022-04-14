@@ -333,8 +333,10 @@ function createPopup(condition) {
     </div>
     `
     document.getElementsByTagName('main')[0].appendChild(popup);
-    audio.src = "./sounds/" + sound + ".wav";
-    audio.play();
+    if(sound !== "") {
+        audio.src = "./sounds/" + sound + ".wav";
+        audio.play();
+    }
 }
 
 document.addEventListener("keyup", function(e) {
