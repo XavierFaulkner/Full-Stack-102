@@ -218,10 +218,7 @@ function finish() {
         //display winner and give payouts if needed
         setTimeout(() => {
             //determine payout
-            if(dealerTotal > 21) {
-                winnings = wager*1.5;
-                createPopup("win");
-            } else if(playerTotal > dealerTotal && playerTotal < 21) {
+            if(playerTotal > dealerTotal && playerTotal < 21) {
                 winnings = wager*1.5;
                 createPopup("win");
             } else if(playerTotal == dealerTotal && playerTotal < 21) {
