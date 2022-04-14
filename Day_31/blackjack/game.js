@@ -27,6 +27,7 @@ const hitButton = document.getElementById('hit');
 const stayButton = document.getElementById('stay');
 const playerTotalHTML = document.getElementById('playerTotal');
 const dealerTotalHTML = document.getElementById('dealerTotal');
+const audio = document.getElementById('audio');
 
 let playerCards = [];
 let playerCardsValues = [];
@@ -59,6 +60,13 @@ function cardHTML() {
 }
 
 function getRandomCard() {
+    //reshuffle the deck when cards run out
+    if(deck.length < 1) {
+        deck = dealt;
+        deck = shuffleDeck(deck);
+        dealt = [];
+        numDealt = 0;
+    }
     let card = deck.pop(Math.floor(Math.random() * 52));
     numOfActive.innerText = deck.length;
     numDealt++;
@@ -82,6 +90,8 @@ function shuffleDeck(deck) {
 }
 
 function startGame(betAmount) {
+    audio.src = "./sounds/chips.wav";
+    audio.play();
     wager = betAmount;
     coins -= betAmount;
     numOfCoins.innerText = coins;
@@ -90,7 +100,6 @@ function startGame(betAmount) {
     }
     setTimeout(() => { 
         givePlayerCard("player");
-        console.log(playerCardsValues);
         setTimeout(() => {
             givePlayerCard("dealer");
             setTimeout(() => {
@@ -121,6 +130,8 @@ function givePlayerCard(player) {
         for(let i = 0; i < playerCards.length; i++) {
             playerCardsHTML.appendChild(playerCards[i]);
         }
+        audio.src = "./sounds/cards.wav";
+        audio.play();
         updateTotal(playerCardsValues, "player");
     } else {
         let cardInformation = cardHTML();
@@ -131,6 +142,8 @@ function givePlayerCard(player) {
         for(let i = 0; i < dealerCards.length; i++) {
             dealerCardsHTML.appendChild(dealerCards[i]);
         }
+        audio.src = "./sounds/cards.wav";
+        audio.play();
         updateTotal(dealerCardsValues, "dealer");
     }
 }
@@ -170,6 +183,8 @@ function updateTotal(cards, player) {
 }
 
 hitButton.addEventListener('click', function(e) {
+    audio.src = "./sounds/click.wav";
+    audio.play();
     setTimeout(() => { 
         givePlayerCard("player");
         if(playerTotal >= 21) {
@@ -183,12 +198,14 @@ hitButton.addEventListener('click', function(e) {
 });
 
 stayButton.addEventListener('click', function(e) {
+    audio.src = "./sounds/click.wav";
+    audio.play();
     hitButton.setAttribute("disabled", "true");
     stayButton.setAttribute("disabled", "true");
     setTimeout(() => {
         finish();
     }, 500);
-})
+});
 
 function finish() {
     if(playerTotal > 21) {
@@ -201,7 +218,10 @@ function finish() {
         //display winner and give payouts if needed
         setTimeout(() => {
             //determine payout
-            if(playerTotal > dealerTotal && dealerTotal < 21) {
+            if(dealerTotal > 21) {
+                winnings = wager*1.5;
+                createPopup("win");
+            } else if(playerTotal > dealerTotal && playerTotal < 21) {
                 winnings = wager*1.5;
                 createPopup("win");
             } else if(playerTotal == dealerTotal && playerTotal < 21) {
@@ -209,12 +229,15 @@ function finish() {
                 createPopup("push");
             } else if(playerTotal == 21 && dealerTotal == 21) {
                 winnings = wager*1.5;
-                createPopup("win");
-            } else if(playerTotal == 21 && dealerTotal < playerTotal) {
+                createPopup("blackjack");
+            } else if(playerTotal == 21) {
                 winnings = wager*2;
-                createPopup("win");
+                createPopup("blackjack");
+            } else {
+                winnings = 0;
+                createPopup("lost");
             }
-        }, 1000);
+        }, 1500);
     }
 }
 
@@ -245,26 +268,48 @@ function createPopup(condition) {
     let amount;
     let pic;
     let color;
+    let sound;
 
     switch(condition) {
+        case "blackjack":
+            message = "Blackjack!";
+            amount =  "+ $" + (wager + winnings);
+            coins += (wager + winnings);
+            numOfCoins.innerText = coins;
+            pic = "rich";
+            color = "green";
+            sound = "cha-ching";
+            break;
         case "win":
             message = "You Won!";
-            amount =  "+ $" +wager;
+            amount =  "+ $" + (wager + winnings);
+            coins += (wager + winnings);
+            numOfCoins.innerText = coins;
             pic = "rich";
-            color = "green"
+            color = "green";
+            sound = "cha-ching";
             break;
         case "lost":
             message = "You Lost!";
-            amount =  "- $" +wager;
+            amount =  "- $" + wager;
             pic = "hobo";
-            color = "red"
+            color = "red";
+            sound = "lose";
             break;
         case "bust":
             message = "Bust!";
-            amount =  "- $" +wager;
+            amount =  "- $" + wager;
             pic = "hobo";
-            color = "red"
+            color = "red";
+            sound = "lose";
             break;
+        case "push":
+            message = "Push";
+            amount = " + $" + wager;
+            coins += wager;
+            pic = "push";
+            sound = "";
+            numOfCoins.innerText = coins;
     }
 
     let popup = document.createElement('div');
@@ -288,6 +333,8 @@ function createPopup(condition) {
     </div>
     `
     document.getElementsByTagName('main')[0].appendChild(popup);
+    audio.src = "./sounds/" + sound + ".wav";
+    audio.play();
 }
 
 document.addEventListener("keyup", function(e) {
