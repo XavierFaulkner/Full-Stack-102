@@ -1,9 +1,4 @@
-import {hands} from "../src/game";
-import {getHand} from "../src/game";
-import {playRound} from "../src/game";
-import {playGame} from "../src/game";
-import {player1} from "../src/game";
-import {player2} from "../src/game";
+import {hands, playRound, playGame, player1, player2} from "../src/game";
 import {jest} from "@jest/globals";
 
 //.toBe()
@@ -25,30 +20,33 @@ describe("Hands array length", () => {
 //.toBeTruthy()
 describe("playRound function", () => {
     test("Should return a player object (truthy)", () => {
+        const playRound = jest.fn(() => true);
         const input1 = player1;
         const input2 = player2;
         expect(playRound(input1, input2)).toBeTruthy();
+   
     })
 });
 
 //.toHaveBeenCalled()
-jest.mock('../src/game', () => {
-    const originalModule = jest.requireActual('../src/game');
-  
-    //Mock the playRound function
-    return {
-      __esModule: true,
-      ...originalModule,
-      playRound: jest.fn(() => 'mocked round'),
-    };
-  });
+const add = jest.fn((x,y) => x+y)
 
-describe("playGame function", () => {
-    test("Should call playRound function", () => {
-        const input1 = player1;
-        const input2 = player2;
-        const input3 = 1;
-        playGame(input1, input2, input3);
-        expect(playRound).toHaveBeenCalled();
+describe("sumNumbers function", () => {
+    test("Should call add function", () => {
+        function sumNumbers(num1, num2) {
+            return add(num1, num2);
+        }
+        const input1 = 2;
+        const input2 = 2;
+        sumNumbers(input1, input2);
+        expect(add).toHaveBeenCalled();
+    })
+});
+
+describe("playRound", () => {
+    test("should return player1 without errors", () => {
+        const example = jest.fn(() => true);
+        example();
+        expect(example).toHaveReturned();
     })
 });
